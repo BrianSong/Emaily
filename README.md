@@ -19,7 +19,6 @@
 * In Node.js, we can not use ES2015 module like *import express from 'express'*, instead, the correct way is *const express = require('express')*.
 * Heroku is used to deploy this project, finally, it will return a URL for this project where anyone else can use this URL to use our application instead of *http://localhost:3000* which is only visable for our own local machine.
 * If there are some variables that we do not want other engineers to change it, we should name it full capticalize : e.x. CONSTVARIABLE
-* Passport JS is used to help OAuth (Google, Facebook, Twitter...) easier. However, it still has some cons:
-1. not all automatic.
-2. So hard for the user to have a bigger picture about what is going on by just adding some weired code here and there.
-3. Need to download multiple passport strategy for mutiple specific provider(Google, Facebook...).
+* Passport JS is used to help OAuth (Google, Facebook, Twitter...) easier. However, it still has some cons: 1. not all automatic. 2. So hard for the user to have a bigger picture about what is going on by just adding some weired code here and there. 3. Need to download multiple passport strategy for mutiple specific provider(Google, Facebook...).
+* In OAuth, client ID is for public while clientSecret is private and not for sharing. So, we can store it inside a file like `config/key.js` that will not be pulled up to Github by using `.gitignore`.
+* Inside the helper OAuth Strategy function: GoogleStrategy({clientID, clientSecret, callbackURL}, () => {}): the callback URL is used for redirecting the user after getting their permission to let google provides their informations (However, this URL must be set to authorized redirect URLs beforehead to avoid "Error: redirect_uri_mismatch in Google OAuth website"), the () => {} arrow function
