@@ -8,6 +8,7 @@
 4. Authetication: Google OAuth + Passport JS.
 5. Handling Billings: Stripe.
 6. Email Provider: SendGrid.
+7. Deploy: Heroku.
 
 ### Belows are some keypoints that I learned from creating this screamy app:
 
