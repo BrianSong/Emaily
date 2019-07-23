@@ -50,4 +50,18 @@
 * Provider inside the `index.js` is a react component come from react-redux library that makes the redux store accessible for every components under `App.js`.
 * In action creators, we can communicate between the frontend React/Redux to Node/Express API by making a URL request by axios to backend URLs. After this, we can use the response from Node/Express API to update the states in redux store with the help of redux-thunk which helps to fix problems caused by async response by having direct access to the dispatch().
 * In order to let every components have the ability to get access to the auth states, the auth action creator is put inside the componentDidMount() life cycle method in the App component in `App.js` by connect().
-* There are two methods for logging out: 1. Use full http request by link tage 《a》《/a》
+* There are two methods for logging out: 1. Use full http request by link tage 《a》《/a》 to backend logout URL and redirect to the frontend by *res.redirect*. However, this will cause the entire browser to refresh itself and empty every data in Redux. 2. AJAX request: No page refresh, but wee have to handle action creators, reducers, etc. (Redux side) and redirect to landing page. This way is faster but more diffcult.
+* Instead of 《a》, we use 《link》 for React world.
+* One very useful syntax: *boolean logic ? value to return if true : value to return if false*
+* Billings section (accept credit card and take money) will be handled by an outside API called "stripe" because we are bad at security as web developer.
+* Since monthly plan is much more complicate compared to one-time billings, so we avoid choose them.
+* In frontend React, we can never refer to files inside `config` (we can refer to them in the backend) since everything in React is accessible to others and our secret keys will be exposed. However, create-react-app custom enviroment variables define in `.env.development` and `.env.production` can help to fix this problem: we can refer to keys by *process.env*.
+* Compared to *require* which can do logic beforehead, *import* in ES2015 cannot have any logic statement beforehead.
+* react-stripe-checkout is a bottom-like component, after we click it, it will redirect us to the interface for entering credit card information.
+* Everytime we want to communicate with the backend API, we need to do it inside some action creators.
+* The BodyParser middleware can make the req.body has all the properties passed into the backend URL.
+* The user model in the MongoDB should has "credit" property.
+* Passport helps us to have the ability to get access to the current user model by calling *req.user*.
+* We can create a middleware contains *res.status(401).send({error: 'You must log in !'})* and implement it anywhere we need to check if the user has logged in.
+* Public assets: `index.html` and `main.js/main.css` will take the role of react server (which is not existed) in the production mode. They will be served if the browser asks for some routes (defined in React server side) that the express server does not understand.
+* There are 3 ways for us to deploy heroku: 1. We first build our direct react app into `main.js` and `main.css` by running npm run build and then push to Heroku. (Break tradition !); 2. We push to heroku first and tell the heroku to build for us (In this way, we need to tell heroku to install ALL dependencies that can be only be used one time); 3. We push to a third-party server (like circle CI) for testing and building and then push to Heroku. => Accept!
