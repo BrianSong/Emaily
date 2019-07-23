@@ -73,6 +73,15 @@
 * *.map()* takes a list and do some specific operation to each individual elements and return the changed list back.
 * Instead of creating a mailed object (survey model instance + email template/HTML file) that will be sent to sendGrid for every recipients (time-consuming), we will create only one mailed object for all recipients.
 * try{XXX
-  } catch(err){                   will inform us and send back an error message if XXX goes wrong.
-    res.status(422).send(err)}；
-*
+  } catch(err){                  
+    res.status(422).send(err)}；will inform us and send back an error message if XXX goes wrong.
+* After the recipients click the yes/no feedback buttom in the survey, we will redirect them into one of our backend route handler where "thank you" is sent back by "res".
+* Redux Form can make communicating the input form data between each components much easier compared to just do it by react (where we should find the lowest co-parent component and pass around the form data as props).
+* Redux Form is a very good helper library that helps us to wire up action creators, reducers (the "formReducers" is totally managed by Redux Form itself)... automatically rather than do it from scratch by Redux.
+* Everytime we want to do distructing inside the arrow function, remember to add () around {}, for example: ({label, text}) = > {...}
+* Everytime we are creating list(array) of elements, remember to add "key" properties for avoiding warning from Redux.
+* Redux Form has a built-in validate function where we can do some logic to check if the inputs are validate. If not, we will return the key (should be matched with the name properties of Field tag): value (the error message) pair error to be redered in the screen. (the touch() callback function helps to make the error not be shown for the first time when the screen renders).
+* *.trim()* can automatically remove the space on the two sides of the string, for example: change "   ABC    " to "ABC".
+* emailregex inside .filter() can be used to check if the input recipients' emails are valid for us for now.
+* Instead of putting all states into the Redux store (troublesome for creating all the action creators, reducers, .. ), we can make use of the component level state (This state is not cared by other components/features in the React App). The component level state maybe used to decide to show which components to show like "SurveryForm" or "SurveryFormReview" (if we choose to create new sperate route handler for SurveyFormReview, we need to consider the case if someone forcily enter the URL and reach this new page => not desirable !!)
+* 
