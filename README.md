@@ -50,4 +50,4 @@
 * Provider inside the `index.js` is a react component come from react-redux library that makes the redux store accessible for every components under `App.js`.
 * In action creators, we can communicate between the frontend React/Redux to Node/Express API by making a URL request by axios to backend URLs. After this, we can use the response from Node/Express API to update the states in redux store with the help of redux-thunk which helps to fix problems caused by async response by having direct access to the dispatch().
 * In order to let every components have the ability to get access to the auth states, the auth action creator is put inside the componentDidMount() life cycle method in the App component in `App.js` by connect().
-* There are two methods for logging out: 1. Use full http request by link tage *<a></a>*
+* There are two methods for logging out: 1. Use full http request by link tage 《a》《/a》
