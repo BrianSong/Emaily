@@ -65,3 +65,14 @@
 * We can create a middleware contains *res.status(401).send({error: 'You must log in !'})* and implement it anywhere we need to check if the user has logged in.
 * Public assets: `index.html` and `main.js/main.css` will take the role of react server (which is not existed) in the production mode. They will be served if the browser asks for some routes (defined in React server side) that the express server does not understand.
 * There are 3 ways for us to deploy heroku: 1. We first build our direct react app into `main.js` and `main.css` by running npm run build and then push to Heroku. (Break tradition !); 2. We push to heroku first and tell the heroku to build for us (In this way, we need to tell heroku to install ALL dependencies that can be only be used one time); 3. We push to a third-party server (like circle CI) for testing and building and then push to Heroku. => Accept!
+* The survey applied in this project is just a simple yes/no question, maybe for the future, more specific questions maybe involved.
+* We used a third-party library called sendGrid to help us sent the emails and record the users' response data and send it back to our backend API.
+* We should create a survey model links to each user model. Inside this survey model, its properties are title (string), subject (string), body (string), recipient (subdocument collection), yes ({type: Number, default: 0}), no ({type: Number, default: 0}), user (ref:'user' => the user model).
+* Because each model in MongoDB can contain data upto 4 MB (about 20000 email address), we do not put survey as a subdocument collection as the user model, but as an individual model.
+* Everytime we want to resure some code to do a pre-check for us, like "check if the user is login" or "Does the user has enough credit to start a survey", we can wrap those code into some middlewares (can be effective by adding into the Route handler arguments).
+* *.map()* takes a list and do some specific operation to each individual elements and return the changed list back.
+* Instead of creating a mailed object (survey model instance + email template/HTML file) that will be sent to sendGrid for every recipients (time-consuming), we will create only one mailed object for all recipients.
+* try{XXX
+  } catch(err){                   will inform us and send back an error message if XXX goes wrong.
+    res.status(422).send(err)}；
+*
