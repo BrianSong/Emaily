@@ -84,4 +84,10 @@
 * *.trim()* can automatically remove the space on the two sides of the string, for example: change "   ABC    " to "ABC".
 * emailregex inside .filter() can be used to check if the input recipients' emails are valid for us for now.
 * Instead of putting all states into the Redux store (troublesome for creating all the action creators, reducers, .. ), we can make use of the component level state (This state is not cared by other components/features in the React App). The component level state maybe used to decide to show which components to show like "SurveryForm" or "SurveryFormReview" (if we choose to create new sperate route handler for SurveyFormReview, we need to consider the case if someone forcily enter the URL and reach this new page => not desirable !!)
-* 
+* By default, the Redux Form will destroy any form value after the form is unmounted (not shown on the screen), however, in this way, if the user want to revise their form information by clicking the "back" buttom on the final revew of the form, all form informations will be lost. This problem can be resolved by setting the *destroyonUnmount: false* inside the reduxForm().
+* After setting
+export default reduxForm({
+  validate,
+  form: 'surveyForm',
+  destroyOnUnmount:false})(SurveyForm),
+every form imformations we filled in the SurveyForm component can be accessed by state.form.SurveyForm directly.
