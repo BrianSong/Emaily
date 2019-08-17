@@ -79,6 +79,29 @@
 * Redux Form can make communicating the input form data between each components much easier compared to just do it by react (where we should find the lowest co-parent component and pass around the form data as props).
 * Redux Form is a very good helper library that helps us to wire up action creators, reducers (the "formReducers" is totally managed by Redux Form itself)... automatically rather than do it from scratch by Redux.
 
+
+* Everytime we want to do distructing inside the arrow function, remember to add () around {}, for example: ({label, text}) = > {...}
+* Everytime we are creating list(array) of elements, remember to add "key" properties for avoiding warning from Redux.
+* Redux Form has a built-in validate function where we can do some logic to check if the inputs are validate. If not, we will return the key (should be matched with the name properties of Field tag): value (the error message) pair error to be redered in the screen. (the touch() callback function helps to make the error not be shown for the first time when the screen renders).
+* *.trim()* can automatically remove the space on the two sides of the string, for example: change "   ABC    " to "ABC".
+* emailregex inside .filter() can be used to check if the input recipients' emails are valid for us for now.
+* Instead of putting all states into the Redux store (troublesome for creating all the action creators, reducers, .. ), we can make use of the component level state (This state is not cared by other components/features in the React App). The component level state maybe used to decide to show which components to show like "SurveryForm" or "SurveryFormReview" (if we choose to create new sperate route handler for SurveyFormReview, we need to consider the case if someone forcily enter the URL and reach this new page => not desirable !!)
+* By default, the Redux Form will destroy any form value after the form is unmounted (not shown on the screen), however, in this way, if the user want to revise their form information by clicking the "back" buttom on the final revew of the form, all form informations will be lost. This problem can be resolved by setting the *destroyonUnmount: false* inside the reduxForm().
+* After setting
+export default reduxForm({
+  validate,
+  form: 'surveyForm',
+  destroyOnUnmount:false})(SurveyForm),
+every form imformations we filled in the SurveyForm component can be accessed by state.form.SurveyForm directly.
+* In React/Redux world, everytime we want to change the state in Redux store, we must call the action creator.
+* withRouter helper function can help any arbitray components get access to the react-router and has the ability to navigate around by *history.push()*.
+* For specific webhooks(like sendGrid) implementation: 1. Production mode: every 30s or so, sendGrid will post all the clicks to our backend API and we can get access to all the clicks. 2. Development mode: localhost:5000 is meaningless to sendGrid, so we use "LocalTunnel" helper function as the bridge between sendGrid and localhost:5000.
+* By setting the specific URL users will be redirect to after they click the survey, we can find out exactly which servey they are responding to and their specific response (yes/no) because sendGrid only provides us with the responsed user's emails and the redirect URL.
+* There are totally 3 pre-processing we need to perform to the users' response: 1. remove duplicate clicks; 2. filter out other events rather than "click"; 3. filter out event "click" but an unexpected URL. By using the built-in helper function inside Node.JS: URL.pathname(), we can extract the key path and extract surveyID and 'choice' with the help of "path-parser" and lodash.compact(). Finally, we can use "lodash.uniqBy()" to remove duplicate email and surveyID.
+* (req, res) is the default argument sent to the backend API, the "req" contains all the coming in request information and we should use "res" to response back or the whole server will be hanged.
+* Instead of doing a lot of logic to collections (models) in the Node/Express server, we should do the logic directly on MongoDB by Mongo Queries (e.x.: findOne(), updateOne()...).
+* Mongo Queries tips: 1. How to search: Google with mongoose js + ....(what we wanna do). 2. How to test the query out every easy? Type node in the terminal and paste all "require" code from index.js into it and feel free to try it out.
+## Summary: In React world, we use action creators to send "get", "post"... request to backend API: Node/Express JS (serves as the messager between React/Redux and MongoDB), and take the "res" (response) as our *action.payload*. After that, the according reducers watched for these actions' type will update the states in Redux store based on the *action.payload*. Finally, the frontend will be rerendered according to the updated states.
 # Emaily - A full-stack project built by React/Redux and Node.js
 ## *This project is a feedback collection application faced for start-up owner/product manager so that they can collect feedback from their users.*
 
@@ -181,23 +204,107 @@ every form information we filled in the SurveyForm component can be accessed by 
 * Instead of doing a lot of logic to collections (models) in the Node/Express server, we should do the logic directly on MongoDB by Mongo Queries (e.x.: findOne(), updateOne()...).
 * Mongo Queries tips: 1. How to search: Google with mongoose js + ....(what we wanna do). 2. How to test the query out every easy? Type node in the terminal and paste all "require" code from index.js into it and feel free to try it out.
 ## Summary: In React world, we use action creators to send "get", "post"... request to backend API: Node/Express JS (serves as the messager between React/Redux and MongoDB), and take the "res" (response) as our *action.payload*. After that, the according reducers watched for these actions' type will update the states in Redux store based on the *action.payload*. Finally, the frontend will be rerendered according to the updated states.
-* Everytime we want to do distructing inside the arrow function, remember to add () around {}, for example: ({label, text}) = > {...}
+
+
+
+
+# Emaily - A full-stack project built by React/Redux and Node.js
+## *This project is a feedback collection application faced for start-up owner/product manager so that they can collect feedback from their users.*
+
+### Teches used in this project:
+1. FrontEnd: React/Redux (Redux form).
+2. BackEnd Server: Node/Express.
+3. Database: MongoDB.
+4. Authentication: Google OAuth + Passport JS.
+5. Handling Billings: Stripe.
+6. Email Provider: SendGrid.
+7. Deploy: Heroku.
+
+### Below are some key points that I learned from this emaily project:
+* Express/Node API serves as messager between React App (send out HTTP request) and MongoDB.
+* `package.json` is a control hub of our project that can be used to define a lot of different dependencies that our project depends upon.
+* Node: execute code outside of the browser.
+* Express: a library runs in Node runtime that has a collection of helper methods which makes dealing with HTTP traffic requests came from React App easier.
+* The incoming HTTP traffic from React App will rush in some port of Node where the Express will use Route Handler to give according response to Node and up to React App.
+* In Node.js, we can not use ES2015 module like *import express from 'express'*, instead, the correct way is *const express = require('express')*.
+* Heroku is used to deploy this project, finally, it will return a URL for this project where anyone else can use this URL to use our application instead of *http://localhost:3000* which is only visible for our local machine.
+* If there are some variables that we do not want other engineers to change it, we should name it full capitalize: e.x. CONSTVARIABLE
+* Passport JS is used to help OAuth (Google, Facebook, Twitter...) easier. However, it still has some cons: 1. not all automatic. 2. So hard for the user to have a bigger picture about what is going on by just adding some weird code here and there. 3. Need to download multiple passport strategy for multiple specific providers (Google, Facebook...).
+* In OAuth, the client ID is for the public while clientSecret is private and not for sharing. So, we can store it inside a file like `config/key.js` that will not be pulled up to Github by using `.gitignore`.
+* Inside the helper OAuth Strategy function: GoogleStrategy({clientID, clientSecret, callbackURL}, () => {}): the callback URL is used for redirecting the user after getting their permission to let google provides their informations (However, this URL must be set to authorized redirect URLs beforehand to avoid "Error: redirect_uri_mismatch in Google OAuth website"). As for the () => {} arrow function: it is called after the server exchange the code with the Google server and get the users' info. So, inside this arrow function, we should take the authenticated user info and save it into the database (MongoDB) by *new User({id:XXX}).save()*. But remember, we should search our database first to see whether the user already exist (then we can skip this step).
+* Node mon is a helper library that can automatically restart the backend server every time we changed our source code so that we do not need to restart manually.
+* After refactor and spread all elements, we must wire them back into `index.js`(used to boost up everything), otherwise, they will not be executed automatically.
+* Cookies, unlike stateless HTTP, can be relied on for unique identifying information exchanged between browser and server. After the user logs out, the cookie will be unset.
+* We use the unique and consistent profile id in OAuth as the unique email-password for authentication. It is the only thing we care about after all those Google OAuth Flow.
+* The MongoDB used in this project is hosted by MongoDB Atlas. In MongoDB, mongoose.js is a helper library. Below are some correspondences between MongoDB world and mongoose world: Collections <=> Model class; {id: 1, name: "Alex", age: 30} <=> Model Instance.
+* To include helper function Schema inside mongoose, we can use ES2015 destructing: const {Schema} = mongoose
+* For referring mongoose models, we do not write *require()*, instead, we call it directly by *const user = mongoose.model('user')*.
+* In `index.js`, *require('./models/User')* (define the Mongo) should be put in front of *require('./services/passport')* (implement the Mongo).
+* *.then()* is used as callback for async operation (every operations on database).
+* By passing to the serialUser(), the user model generated by the arrow callback function in GoogleStrategy will be transformed into some identifying pieces of information. Then the Passport.JS will take this information and transform them into the cookie and pass the cookie to the browser. After this flow, later on, once the user makes any request, the cookie will be passed into the server and being processed by deserialUser() for identifying which user/user model it is.
+* OAuth's only purpose is to allow someone to sign in/log in, after that, we will use our own internal ID assigned by MongoDB instead of the Google profile ID.
+* cookie-session helper library is used for managing cookies.
+* Inside the passing in arguments (req, res) for backend, Passport.JS automatically attaches the user property and many other helper functions like req.logout() (after this, req.user() will become null) to the req object.
+* Inside `config/keys`, we need to develop two sets of keys: dev (inside the laptop) and prod (inside Heroku) for mainly 3 reasons: 1. In case the laptop is lost or hacked; 2. For creating a new and clear MongoDB; 3. In this way, we can do development without affecting the real product. In order to do this, we need to create a new set of keys (MongoDB keys, Google API keys, cookie keys...) and set them inside Heroku config variables so that they can be pulled by *process.env* later on.
+* Since the *process.env.NODE_ENV* can decide whether the current mode is development production, so we can use it as the condition logic inside `key.js`.
+* By setting *Proxy: true*, we can tell GoogleStrategy to trust any middle proxy (like Heroku proxy) so that the original set "https" will not be changed into "http" for the callback URL.
+* Compared to "http", "https" is used for entering the sensitive information like credit card information because if we put those information in "http" (the extra "s" here means security), everyone else can see.
+* React (client) has a separate front-end server (generate JS stuff) rather than the node/express server (generate Json data). The reason we use two separate servers is that once combined them into a single server, we cannot use create-react-app which has many built-in great helper libraries.
+* After adding *"dev": "concurrently \"npm run server\" \"npm run client\""* under the `package.json` under `server`, we can start two servers together by running npm run dev in the terminal.
+* After adding *proxy: {"/auth/google": {"target": "http://localhost:5000"}}* under the `package.json` under `client`, we can refer to *auth/google* even if we are in our front-end URL (localhost:3000), this addition line of code will magically connect with the backend server and take us to localhost:5000/auth/google, the proxy here is a built-in proxy in create-react-app for communicating with the backend Node/Express API server.
+* However, in production mode, there is no create-react-app server (only be created in the dev mode for us to have a good experience in creating react), only the Node/Express server will existed for serving all the react part, also, the *auth/google* will definitely work since we are now only at backend URL provided by Heroku.
+* Async request (like operations on the database) will return a promise, and *.then()* is used as a callback function that will be automatically called with the value returned from the async requests.
+* Rather than the *.then()*, we can also applied a more understandable way: Async/Await consisted of mainly two steps: 1. put "async" ahead of function contains any async code; 2. put "await" ahead of the promise and assign it to some const variables that we can use later on.
+* In React world, there are two root files: `index.js` (boost up logic for Redux) and `App.js` (React layer where decide which components to show using React Router).
+* Naming strategy: If the file will export some react components, we need capitalization at the beginning like `App.js`, otherwise, if the file only exports a function, switch to lowercase opening like `functionX.js`.
+* Provider inside the `index.js` is a react component come from the react-redux library that makes the redux store accessible for every component under `App.js`.
+* In action creators, we can communicate between the frontend React/Redux to Node/Express API by making a URL request by axios to backend URLs. After this, we can use the response from Node/Express API to update the states in redux store with the help of redux-thunk which helps to fix problems caused by the async response by having direct access to the dispatch().
+* In order to let every component have the ability to get access to the auth states, the auth action creator is put inside the componentDidMount() life cycle method in the App component in `App.js` by connect().
+* There are two methods for logging out: 1. Use full http request by link tage 《a》《/a》 to backend logout URL and redirect to the frontend by *res.redirect*. However, this will cause the entire browser to refresh itself and empty every data in Redux. 2. AJAX request: No page refresh, but wee have to handle action creators, reducers, etc. (Redux side) and redirect to the landing page. This way is faster but more difficult.
+* Instead of 《a》, we use 《link》 for React world.
+* One very useful syntax: *boolean logic ? value to return if true : value to return if false*
+* Billings section (accept credit card and take money) will be handled by an outside API called "stripe" because we are bad at security as a web developer.
+* Since the monthly plan is much more complicated compared to one-time billings, so we avoid choose them.
+* In frontend React, we can never refer to files inside `config` (we can refer to them in the backend) since everything in React is accessible to others and our secret keys will be exposed. However, create-react-app custom environment variables define in `.env.development` and `.env.production` can help to fix this problem: we can refer to keys by *process.env*.
+* Compared to *require* which can do logic beforehand, *import* in ES2015 cannot have any logic statement beforehand.
+* react-stripe-checkout is a bottom-like component, after we click it, it will redirect us to the interface for entering credit card information.
+* Every time we want to communicate with the backend API, we need to do it inside some action creators.
+* The BodyParser middleware can make the req.body has all the properties passed into the backend URL.
+* The user model in the MongoDB should have "credit" property.
+* Passport helps us to have the ability to get access to the current user model by calling *req.user*.
+* We can create a middleware contains *res.status(401).send({error: 'You must log in !'})* and implement it anywhere we need to check if the user has logged in.
+* Public assets: `index.html` and `main.js/main.css` will take the role of react server (which does not exist) in the production mode. They will be served if the browser asks for some routes (defined in React server side) that the express server does not understand.
+* There are 3 ways for us to deploy heroku: 1. We first build our direct react app into `main.js` and `main.css` by running npm run build and then push to Heroku. (Break tradition !); 2. We push to heroku first and tell the heroku to build for us (In this way, we need to tell heroku to install ALL dependencies that can be only be used one time); 3. We push to a third-party server (like circle CI) for testing and building and then push to Heroku. => Accept!
+* The survey applied in this project is just a simple yes/no question, maybe for the future, more specific questions may be involved.
+* We used a third-party library called sendGrid to help us sent the emails and record the users' response data and send it back to our backend API.
+* We should create a survey model links to each user model. Inside this survey model, its properties are title (string), subject (string), body (string), recipient (subdocument collection), yes ({type: Number, default: 0}), no ({type: Number, default: 0}), user (ref:'user' => the user model).
+* Because each model in MongoDB can contain data up to 4 MB (about 20000 email address), we do not put survey as a subdocument collection as the user model, but as an individual model.
+* Every time we want to let some code to do a pre-check for us, like "check if the user is login" or "Does the user has enough credit to start a survey", we can wrap those code into some middlewares (can be effective by adding into the Route handler arguments).
+* *.map()* takes a list and do some specific operation to each individual elements and return the changed list back.
+* Instead of creating a mailed object (survey model instance + email template/HTML file) that will be sent to sendGrid for every recipients (time-consuming), we will create only one mailed object for all recipients.
+* try{XXX
+  } catch(err){                  
+    res.status(422).send(err)}；will inform us and send back an error message if XXX goes wrong.
+* After the recipients click the yes/no feedback button in the survey, we will redirect them into one of our backend route handler where "thank you" is sent back by "res".
+* Redux Form can make communicating the input form data between each component much easier compared to just do it by react (where we should find the lowest co-parent component and pass around the form data as props).
+* Redux Form is a very good helper library that helps us to wire up action creators, reducers (the "formReducers" is totally managed by Redux Form itself)... automatically rather than do it from scratch by Redux.
+* Everytime we want to do destructing inside the arrow function, remember to add () around {}, for example: ({label, text}) = > {...}
 * Everytime we are creating list(array) of elements, remember to add "key" properties for avoiding warning from Redux.
-* Redux Form has a built-in validate function where we can do some logic to check if the inputs are validate. If not, we will return the key (should be matched with the name properties of Field tag): value (the error message) pair error to be redered in the screen. (the touch() callback function helps to make the error not be shown for the first time when the screen renders).
+* Redux Form has a built-in validate function where we can do some logic to check if the inputs are validate. If not, we will return the key (should be matched with the name properties of Field tag): value (the error message) pair error to be rendered in the screen. (the touch() callback function helps to make the error not be shown for the first time when the screen renders).
 * *.trim()* can automatically remove the space on the two sides of the string, for example: change "   ABC    " to "ABC".
 * emailregex inside .filter() can be used to check if the input recipients' emails are valid for us for now.
-* Instead of putting all states into the Redux store (troublesome for creating all the action creators, reducers, .. ), we can make use of the component level state (This state is not cared by other components/features in the React App). The component level state maybe used to decide to show which components to show like "SurveryForm" or "SurveryFormReview" (if we choose to create new sperate route handler for SurveyFormReview, we need to consider the case if someone forcily enter the URL and reach this new page => not desirable !!)
-* By default, the Redux Form will destroy any form value after the form is unmounted (not shown on the screen), however, in this way, if the user want to revise their form information by clicking the "back" buttom on the final revew of the form, all form informations will be lost. This problem can be resolved by setting the *destroyonUnmount: false* inside the reduxForm().
+* Instead of putting all states into the Redux store (troublesome for creating all the action creators, reducers, .. ), we can make use of the component level state (This state is not cared by other components/features in the React App). The component-level state may be used to decide to show which components to show like "SurveryForm" or "SurveryFormReview" (if we choose to create new sperate route handler for SurveyFormReview, we need to consider the case if someone forcibly enters the URL and reach this new page => not desirable !!)
+* By default, the Redux Form will destroy any form value after the form is unmounted (not shown on the screen), however, in this way, if the user wants to revise their form information by clicking the "back" button on the final review of the form, all form information will be lost. This problem can be resolved by setting the *destroyonUnmount: false* inside the reduxForm().
 * After setting
 export default reduxForm({
   validate,
   form: 'surveyForm',
   destroyOnUnmount:false})(SurveyForm),
-every form imformations we filled in the SurveyForm component can be accessed by state.form.SurveyForm directly.
-* In React/Redux world, everytime we want to change the state in Redux store, we must call the action creator.
-* withRouter helper function can help any arbitray components get access to the react-router and has the ability to navigate around by *history.push()*.
+every form information we filled in the SurveyForm component can be accessed by state.form.SurveyForm directly.
+* In React/Redux world, every time we want to change the state in Redux store, we must call the action creator.
+* withRouter helper function can help any arbitrary components get access to the react-router and can navigate around by *history.push()*.
 * For specific webhooks(like sendGrid) implementation: 1. Production mode: every 30s or so, sendGrid will post all the clicks to our backend API and we can get access to all the clicks. 2. Development mode: localhost:5000 is meaningless to sendGrid, so we use "LocalTunnel" helper function as the bridge between sendGrid and localhost:5000.
-* By setting the specific URL users will be redirect to after they click the survey, we can find out exactly which servey they are responding to and their specific response (yes/no) because sendGrid only provides us with the responsed user's emails and the redirect URL.
+* By setting the specific URL users will be redirect to after they click the survey, we can find out exactly which services they are responding to and their specific response (yes/no) because sendGrid only provides us with the responded user's emails and the redirect URL.
 * There are totally 3 pre-processing we need to perform to the users' response: 1. remove duplicate clicks; 2. filter out other events rather than "click"; 3. filter out event "click" but an unexpected URL. By using the built-in helper function inside Node.JS: URL.pathname(), we can extract the key path and extract surveyID and 'choice' with the help of "path-parser" and lodash.compact(). Finally, we can use "lodash.uniqBy()" to remove duplicate email and surveyID.
 * (req, res) is the default argument sent to the backend API, the "req" contains all the coming in request information and we should use "res" to response back or the whole server will be hanged.
 * Instead of doing a lot of logic to collections (models) in the Node/Express server, we should do the logic directly on MongoDB by Mongo Queries (e.x.: findOne(), updateOne()...).
