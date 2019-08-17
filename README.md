@@ -15,7 +15,7 @@
 * `package.json` is a control hub of our project that can be used to define a lot of different dependencies that our project depends upon.
 * Node: execute code outside of the browser.
 * Express: a library runs in Node runtime that has a collection of helper methods which makes dealing with HTTP traffic requests came from React App easier.
-* The incoming HTTP traffic from React App will rush in some port of Node where the Express will use Route Handler to give according response to Node and up to React App.
+* The incoming HTTP traffic from React App will rush in some port of Node where the Express will use Route Handler to give corresponding response to Node and up to React App.
 * In Node.js, we can not use ES2015 module like *import express from 'express'*, instead, the correct way is *const express = require('express')*.
 * Heroku is used to deploy this project, finally, it will return a URL for this project where anyone else can use this URL to use our application instead of *http://localhost:3000* which is only visible for our local machine.
 * If there are some variables that we do not want other engineers to change it, we should name it full capitalize: e.x. CONSTVARIABLE
