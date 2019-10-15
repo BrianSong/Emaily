@@ -11,7 +11,7 @@
 7. Deploy: Heroku.
 
 ### Below are some key points that I learned from this emaily project:
-* Express/Node API serves as messager between React App (send out HTTP request) and MongoDB.
+* Express/Node API serves as postman between React App (send out HTTP request) and MongoDB.
 * `package.json` is a control hub of our project that can be used to define a lot of different dependencies that our project depends upon.
 * Node: execute code outside of the browser.
 * Express: a library runs in Node runtime that has a collection of helper methods which makes dealing with HTTP traffic requests came from React App easier.
